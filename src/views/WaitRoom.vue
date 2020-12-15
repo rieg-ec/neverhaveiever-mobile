@@ -97,13 +97,3 @@ export default {
   },
 };
 </script>
-
-<style module>
-.top-content {
-  background: var(--gradient-primary);
-}
-
-.crown {
-  color: yellow;
-}
-</style>
