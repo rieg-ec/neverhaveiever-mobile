@@ -49,8 +49,8 @@
 
 <script>
 import { IonContent, IonPage, IonSlides, IonSlide } from '@ionic/vue';
-import { ref, computed, onBeforeUnmount } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed } from 'vue';
+import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import useRoom from '@/use/room';
 import useLoading from '@/use/loading';
 import useSocket from '@/use/socket';
@@ -101,17 +101,24 @@ export default {
 
     socket.on('new_statement', (_question) => {
       question.value = _question;
+      readyForNextQuestion.value = false;
       usersNotReady.value = connectedUsers.value.map(u => u.username);
     });
 
     socket.on('restart_game', () => {
-      question.value = '';
       router.back();
     });
 
-    onBeforeUnmount(() => {
+    onBeforeRouteLeave(() => {
+      /*
+      for some reason when using router.back() and then navigating
+      again to this view, vue creates another component without garbage collecting
+      listeners in this one, therefore we need to clean any listeners manually
+      */
       const listeners = ['users_not_ready', 'new_statement', 'restart_game'];
       listeners.forEach((listener) => socket.removeAllListeners(listener));
+      readyForNextQuestion.value = false;
+      question.value = '';
     });
 
     return {

@@ -42,7 +42,7 @@
 
 <script>
 import { IonContent, IonPage } from '@ionic/vue';
-import { computed, onBeforeUnmount } from 'vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import useLoading from '@/use/loading';
 import useRoom from '@/use/room';
@@ -85,10 +85,6 @@ export default {
     socket.on('start_game', async () => {
       await dismissLoading();
       router.push({ name: 'SubmitQuestion' });
-    });
-
-    onBeforeUnmount(() => {
-      socket.removeAllListeners('start_game');
     });
 
     return {

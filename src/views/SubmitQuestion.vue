@@ -34,8 +34,8 @@
 
 <script>
 import { IonContent, IonPage, IonInput, IonLabel, IonItem } from '@ionic/vue';
-import { ref, computed, onBeforeUnmount } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed } from 'vue';
+import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import useRoom from '@/use/room';
 import useAlert from '@/use/alert';
 import useLoading from '@/use/loading';
@@ -63,16 +63,14 @@ export default {
     const socket = useSocket();
     const submittedQuestion = ref(false);
     const question = ref('');
-
     /*
       STATES:
         - submittedQuestion
     */
+    const usersWithoutQuestion = ref(connectedUsers.value.map(u => u.username));
     const connectedUsersUsernames = computed(
       () => connectedUsers.value.map(user => user.username)
     );
-    const usersWithoutQuestion = ref(connectedUsers.value.map(u => u.username));
-
     const getUsersWithoutQuestion = computed(
       () => usersWithoutQuestion.value
             .filter(user => connectedUsersUsernames.value.includes(user))
@@ -94,14 +92,13 @@ export default {
     });
 
     socket.on('start_statements', () => {
-      question.value = '';
-      submittedQuestion.value = false;
       router.push({ name: 'QuestionsRound' });
     });
 
-    onBeforeUnmount(() => {
-      socket.removeAllListeners('users_without_statement');
-      socket.removeAllListeners('start_statements');
+    onBeforeRouteLeave(() => {
+      usersWithoutQuestion.value = connectedUsers.value.map(u => u.username);
+      question.value = '';
+      submittedQuestion.value = false;
     });
 
     return {

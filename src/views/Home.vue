@@ -52,7 +52,7 @@
 
 <script>
 import { IonContent, IonPage, IonInput, IonItem, IonLabel } from '@ionic/vue';
-import { reactive, watch, onBeforeUnmount } from 'vue';
+import { reactive, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import useLoading from '@/use/loading';
 import useRoom from '@/use/room';
@@ -152,14 +152,6 @@ export default {
       inRoom.value = true;
       roomID.value = _roomID;
       router.push({ name: 'WaitRoom' });
-    });
-
-    onBeforeUnmount(() => {
-      const listeners = [
-        'username_exists', 'join_room_failure', 'join_room_success',
-        'create_room_failure', 'create_room_success',
-      ];
-      listeners.forEach((listener) => socket.removeAllListeners(listener));
     });
 
     return {
