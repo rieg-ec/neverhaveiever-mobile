@@ -2,7 +2,7 @@
   <ion-page>
     <ion-content :scrollY="false">
       <div class="m-10h text-2xl flex justify-center">
-        <ion-text>NUNCA NUNCA...</ion-text>
+        <h1>NUNCA NUNCA...</h1>
       </div>
 
       <div class="flex flex-col items-center my-5h">
@@ -51,8 +51,8 @@
 </template>
 
 <script>
-import { IonContent, IonPage, IonInput, IonItem, IonLabel, IonText } from '@ionic/vue';
-import { onBeforeMount, reactive, watch } from 'vue';
+import { IonContent, IonPage, IonInput, IonItem, IonLabel } from '@ionic/vue';
+import { reactive, watch, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
 import useLoading from '@/use/loading';
 import useRoom from '@/use/room';
@@ -68,7 +68,6 @@ export default {
     IonInput,
     IonItem,
     IonLabel,
-    IonText,
     BaseButtonPrimary,
   },
   setup() {
@@ -98,41 +97,69 @@ export default {
       socket.emit('join_room', roomID.value, username.value);
     }
 
-    onBeforeMount(() => {
-      socket.on('username_exists', async () => {
-        // TODO: maybe by focusing name input after error ux is better
-        dismissLoading();
-        await presentAlert('usuario existente');
-        errors.username = true;
-      });
+    socket.on('username_exists', async () => {
+      // TODO: maybe by focusing name input after error ux is better
+      dismissLoading();
+      await presentAlert('usuario existente');
+      errors.username = true;
+    });
 
-      socket.on('join_room_failure', async () => {
-        // TODO: maybe by focusing room id input after error ux is better
-        dismissLoading();
-        await presentAlert('ID de sala invalido');
-        errors.roomID = true;
-      });
+    socket.on('join_room_failure', async () => {
+      // TODO: maybe by focusing room id input after error ux is better
+      dismissLoading();
+      await presentAlert('ID de sala invalido');
+      errors.roomID = true;
+    });
 
-      socket.on('create_room_failure', async () => {
-        dismissLoading();
-        await presentAlert('Hubo un error, intentalo de nuevo');
-        errors.username = true;
-      });
+    socket.on('create_room_failure', async () => {
+      dismissLoading();
+      await presentAlert('Hubo un error, intentalo de nuevo');
+      errors.username = true;
+    });
 
-      socket.on('join_room_success', (_roomID) => {
-        dismissLoading();
-        roomID.value = _roomID;
-        inRoom.value = true;
-        router.push({ name: 'Room' });
-      });
+    socket.on('join_room_success', (_roomID) => {
+      dismissLoading();
+      roomID.value = _roomID;
+      inRoom.value = true;
+      router.push({ name: 'WaitRoom' });
+    });
 
-      socket.on('create_room_success', (_roomID) => {
-        dismissLoading();
-        connectedUsers.value = [{ username: username.value, status: { isAdmin: true } }];
-        inRoom.value = true;
-        roomID.value = _roomID;
-        router.push({ name: 'Room' });
-      });
+    socket.on('create_room_success', (_roomID) => {
+      dismissLoading();
+      connectedUsers.value = [{ username: username.value, status: { isAdmin: true } }];
+      // connectedUsers.value = [
+      //   { username: username.value, status: { isAdmin: true } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      //   { username: username.value, status: { isAdmin: false } },
+      // ];
+      inRoom.value = true;
+      roomID.value = _roomID;
+      router.push({ name: 'WaitRoom' });
+    });
+
+    onBeforeUnmount(() => {
+      const listeners = [
+        'username_exists', 'join_room_failure', 'join_room_success',
+        'create_room_failure', 'create_room_success',
+      ];
+      listeners.forEach((listener) => socket.removeAllListeners(listener));
     });
 
     return {

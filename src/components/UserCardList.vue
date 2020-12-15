@@ -1,5 +1,5 @@
 <template>
-  <div class="px-4 grid grid-cols-2">
+  <div class="px-4 grid grid-cols-2 overflow-y-scroll" :class="`max-h-${maxHeight}`">
     <div
     v-for="(user, index) in users" :key="index"
     class="p-2 w-full
@@ -20,6 +20,7 @@ export default {
   },
   props: {
     users: { type: Array, required: true },
+    maxHeight: { type: String, default: '50h' },
   },
   setup() {
     return {

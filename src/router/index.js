@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
-import Home from '@/views/Home.vue';
-import Room from '@/views/Room.vue';
-import Game from '@/views/Game.vue';
+import Home from '@/views/Home';
+import WaitRoom from '@/views/WaitRoom';
+import SubmitQuestion from '@/views/SubmitQuestion';
+import QuestionsRound from '@/views/QuestionsRound';
 import useRoom from '@/use/room';
 
 const { inRoom } = useRoom();
@@ -17,14 +18,19 @@ const routes = [
     component: Home,
   },
   {
-    path: '/room',
-    name: 'Room',
-    component: Room,
+    path: '/wait-room',
+    name: 'WaitRoom',
+    component: WaitRoom,
   },
   {
-    path: '/game',
-    name: 'Game',
-    component: Game,
+    path: '/submit-question',
+    name: 'SubmitQuestion',
+    component: SubmitQuestion,
+  },
+  {
+    path: '/questions-round',
+    name: 'QuestionsRound',
+    component: QuestionsRound,
   },
 ];
 

@@ -6,7 +6,6 @@ const state = reactive({
   username: '',
   roomID: '',
   connectedUsers: [],
-  statement: '',
 });
 
 const resetRoomState = () => {
@@ -15,7 +14,6 @@ const resetRoomState = () => {
   state.username = '';
   state.roomID = '';
   state.connectedUsers = [];
-  state.statement = '';
 };
 
 const inRoom = computed({
@@ -45,10 +43,6 @@ const connectedUsers = computed({
   set: (users) => { state.connectedUsers = users; },
 });
 
-const connectedUsersUsernames = computed(
-  () => state.connectedUsers.map(u => u.username)
-);
-
 export default function useRoom() {
   return {
     inRoom,
@@ -56,7 +50,6 @@ export default function useRoom() {
     username,
     roomID,
     connectedUsers,
-    connectedUsersUsernames,
     resetRoomState,
   };
 }

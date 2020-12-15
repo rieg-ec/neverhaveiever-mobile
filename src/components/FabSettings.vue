@@ -10,7 +10,7 @@
       <ion-fab-button color="gradient">
         <font-awesome-icon icon="share-alt" @click="handleShare"/>
       </ion-fab-button>
-      <ion-fab-button color="gradient" @click="handleBack" routerLink='/home' routerDirection='back' >
+      <ion-fab-button color="gradient" @click="handleBack" routerLink='/home' routerDirection='back'>
         <font-awesome-icon icon="arrow-left"/>
       </ion-fab-button>
     </ion-fab-list>
